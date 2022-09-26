@@ -1,0 +1,99 @@
+SQL Server 2005 - Grants
+
+--------------
+-- Instance --
+--------------
+
+-- Gerar Trace
+GRANT ALTER TRACE      TO <USER>
+-- Executar SP_WHO
+GRANT VIEW SERVER STATE TO <USER>
+
+
+--------------
+---- Banco ---
+--------------
+
+-- Criar/alterar função
+GRANT CREATE FUNCTION  TO <USER>
+
+-- Criar/alterar procedure
+GRANT CREATE PROCEDURE TO <USER>
+
+-- Execução de todas as procedures/Functions 
+CREATE ROLE [EXEC_PROCS] AUTHORIZATION [dbo]
+GO
+GRANT EXECUTE TO EXEC_PROCS
+GO
+EXEC sp_addrolemember N'EXEC_PROCS', N'USER'
+GO
+
+-- Visualizar objetos (sp_helptext)
+GRANT VIEW DEFINITION  TO <USER>
+
+-- Alterar objetos já criados pelo dbo
+GRANT ALTER ON SCHEMA::dbo TO adm_sise_prod_des
+
+-- Visualizar plano de execução
+GRANT SHOWPLAN         TO <USER>
+* Plano de execução e trace podem ser mais detalhados:
+SET SHOWPLAN_ALL ON;
+SET SHOWPLAN_ALL OFF;
+SET STATISTICS PROFILE ON
+SET STATISTICS PROFILE OFF
+
+-- Grant Execute JOB especifico
+create procedure dbo.ExecJobTeste
+with execute as owner
+as
+exec sp_start_job @job_name = 'TESTE'
+GO
+grant execute on dbo.ExecJobTeste to job
+GO
+exec msdb.dbo.ExecJobTeste
+Command(s) completed successfully.
+
+-- Grant controle de JOBs
+Liberação de acesso a role do banco msdb
+•	SQLAgentUserRole
+•	SQLAgentReaderRole
+•	SQLAgentOperatorRole
+Terá um acesso a atividades administrativas visualizando todos os jobs conforme documentação do site abaixo
+http://msdn.microsoft.com/pt-br/library/ms188283.aspx
+
+
+
+
+
+
+
+
+--- validação
+-- DATABASE PRIVILEGES
+USE <DATABASE>;
+EXECUTE AS USER = '<USER>';
+SELECT *
+FROM fn_my_permissions(NULL, 'Database')
+ORDER BY subentity_name, permission_name ;
+REVERT;
+GO
+
+
+-- OBJECT PRIVILEGES
+USE <DATABASE>;
+EXECUTE AS USER = '<USER>';
+SELECT *
+FROM fn_my_permissions('<SCHEMMA>.<OBJECT>', 'Object')
+ORDER BY subentity_name, permission_name ;
+REVERT;
+GO
+
+
+-- USER PRIVILEGES
+USE <DATABASE>;
+EXECUTE AS USER = '<USER>';
+SELECT *
+FROM fn_my_permissions('<USER>', 'User')
+ORDER BY subentity_name, permission_name ;
+REVERT;
+GO

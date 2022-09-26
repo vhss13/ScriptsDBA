@@ -1,0 +1,4 @@
+USE producao
+GO
+EXEC sp_MSforeachtable @command1="print '?' DBCC SHOWCONTIG('?')"
+GO

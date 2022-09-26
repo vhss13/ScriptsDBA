@@ -1,0 +1,11 @@
+error: The service did not respond to the start or control request in a timely fashion
+Had an issue recently where we couldn’t get the “SQL Server Reporting Services (MSSQLSERVER)” service to start.
+
+In the end it was quite a simple fix, we added the below registry key.
+
+Open Reg Edit
+Navigate to the following registry key “HKEY_LOCAL_MACHINE\SYSTEM\CurrentControlSet\Control”
+Right-click Control, and create a new DWORD with the name “ServicesPipeTimeout”, and then press ENTER.
+Right-click “ServicesPipeTimeout”, and then click Modify.
+Select Decimal, and type 60000 (this will allow the service 1 minute to start)
+Restart Machine
