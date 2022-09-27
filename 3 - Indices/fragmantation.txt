@@ -1,0 +1,3 @@
+http://jeffstevenson.karamazovgroup.com/2008/09/determine-index-fragmentation-in-all.html
+
+http://www.sqlserverblogforum.com/2011/03/index-defragmentation-script-for-sql-server-2000/

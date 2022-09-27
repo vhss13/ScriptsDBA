@@ -1,0 +1,1 @@
+RESTORE HEADERONLY FROM DISK = ‘d:\bu\mm.bak’;

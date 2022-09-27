@@ -1,0 +1,49 @@
+
+I – Segurança no SQL Server:
+
+1. Quais são os protocolos utilizados para conexão ao servidor (Named Pipes, TCP/IP) ?
+2. Qual porta está configurada para utilização do SQL Server ?
+3. O servidor SQL Server está protegido por algum firewall ? Se sim, que portas estão habilitadas ?
+4. O servidor onde o SQL Server está instalado é acessível a qualquer IP da rede ?
+5. O servidor está em uma OU (Organization Unit) separada no AD ? Por que sim ? Por que não ?
+6. Como estão configuradas as contas de serviço do SQL Server ?
+7. Qual é a política de definição e troca de senhas dessas contas ?
+8. Todos os serviços instalados (SQL Server, SQL Agent, SQL Browser, etc) são realmente necessários ?
+9. Existe software de antivírus no servidor de banco de dados ? Houve alguma customização em sua instalação ? Como é feita a atualização ?
+10. Como é feita a atualização do produto (Service Packs, Hotfixes, etc) ?
+
+II – Configurações do Servidor – SQL Server:
+
+1. Apenas as funcionalidades necessárias estão habilitadas ?
+2. É utilizada a solução de database mail ? Como foi configurada ?
+3. Há maior utilização de logins Windows ou SQL ? Por quê ?
+4. Como são definidas as senhas de usuários SQL Server ?
+5. Há algum critério para utilização das roles de servidor (Sysadmin, DbCreator, etc) ?
+6. Há alertas configurados para monitorar questões de segurança ?
+7. Existe alguma solução para auditar os logins feitos à base ?
+8. Existe a utilização de soluções de Database Mirror, Replicação ou Log Shipping ? Como está configurada a segurança dos agentes e pastas envolvidos ?
+9. São utilizados Linked Servers ? Como a segurança dos usuários dos Linked Servers está configurada ?
+
+III – Configurações de Banco de dados:
+
+1. Há algum critério para utilização das roles de banco de dados (db_owner, db_datareader, db_datawriter, etc) ?
+2. Há a utilização de database roles e application roles ?
+3. São utilizadas permissões em nível de schema ?
+4. Há mais acesso à base através de consultas ADHOC ou Stored Procedures ?
+5. Existem regras de negócio codificadas em stored procedures, views e functions ?
+6. Há algum monitoramento de alteração de estruturas de objetos (tabelas, views, procedures, functions, etc) ?
+7. Há a necessidade de criptografar dados ? Se sim, como isso é feito ?
+8. Existem acessos que combinem informações entre bancos de dados diferentes ? Como esse acesso é configurado ?
+
+IV – Procedimentos de Monitoramento:
+
+1. Há algum monitoramento que contemple o nível de utilização de recursos (I/O, memória, CPU) ?
+2. Como é realizada a notificação de uma violação de segurança ?
+3. Já houve algum incidente relacionado à segurança ? Descreva-o
+4. Existe algum processo conhecido que represente riscos à segurança ? Se sim, como são documentados ?
+5. Antes da aplicação entrar em produção, é feito algum teste de segurança ? (SQL Injection, quebra de validação de regras no cliente, senhas “padrão”, etc)
+6. Quando é feito o deploy da aplicação para a área de produção as senhas são trocadas ?
+7. Quando uma aplicação é desativada ou substituída, há um política para remover o banco e os logins associados ?
+8. Os desenvolvedores têm acesso à área de produção e (ou) conhecimento das senhas utilizadas na produção ?
+9. Qual é a política de backup adotada para os bancos de dados de negócio e de sistema ?
+10. Caso o desenvolvedor necessite de um backup, como ele é disponibilizado?

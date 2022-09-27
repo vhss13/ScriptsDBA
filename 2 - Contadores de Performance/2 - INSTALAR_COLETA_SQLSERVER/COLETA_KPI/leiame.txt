@@ -1,0 +1,1 @@
+Alterar o arquivo "PerfmonCollector.bat" para que reflita o ambiente que será instalado.

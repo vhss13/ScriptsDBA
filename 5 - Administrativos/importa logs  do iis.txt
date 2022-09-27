@@ -1,0 +1,3 @@
+BULK INSERT [dbo].[w3svc27]
+FROM 'G:\TI\w3svc27_22.log'
+WITH (FIELDTERMINATOR = ' ', ROWTERMINATOR = '\n')

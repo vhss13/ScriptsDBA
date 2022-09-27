@@ -1,0 +1,42 @@
+-- SQL 2000 version
+DBCC TRACEON (1204, -1)
+-- SQL 2005 version
+DBCC TRACEON (1222, -1)
+
+============================
+
+
+-- Habilitar
+dbcc traceon (1204, 3605, -1)
+go
+dbcc tracestatus(-1)
+go
+-- Desabilitar 
+dbcc traceoff (1204, 3605, -1)
+go
+dbcc tracestatus(-1)
+go
+
+
+------------------------------------------
+---------- Simular DeadLock --------------
+------------------------------------------
+
+-- Criar tabela e inserir o registro
+--- CREATE TABLE DeadLock(id int, name varchar(10))
+--- INSERT INTO DeadLock values (1,'teste')
+
+-- Executar na sessão 1
+BEGIN TRAN
+   select * from DeadLock (holdlock) where id=1
+
+-- Executar na sessão 2
+BEGIN TRAN
+   select * from DeadLock (holdlock) where id=1
+
+-- Executar na sessão 1 (Sessão ficará aguardando o termino da sessão 2)
+update DeadLock set name='teste2' where id=1
+
+-- Executar na sessão 2 (Essa sessão será finalizada com DeadLock)
+update DeadLock set name='teste2' where id=1
+

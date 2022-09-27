@@ -1,0 +1,72 @@
+Microsoft SQL Server security best practices checklist
+
+Authentication
+SQL Server supports two modes of authentication: Windows Authentication and Mixed Mode Authentication. In accordance with SQL Server security best practices, always choose Windows Authentication for your SQL Server installation unless legacy applications require Mixed Mode Authentication for backward compatibility and access.
+
+Windows Authentication is more secure than Mixed Mode Authentication and, when enabled, Windows credentials (that is Kerberos or Windows NT LAN Manager [NTLM] authentication credentials) are trusted to log on to SQL Server. Windows logins use a number of encrypted messages to authenticate SQL Server and the passwords are not passed across the network during authentication. Moreover, Active Directory provides an additional level of security with the Kerberos protocol. As a result, authentication is more reliable and managing it can be reduced by leveraging Active Directory groups for role-based access to SQL Server. In comparison to Windows Authentication mode, Mixed Mode Authentication supports both Windows accounts and SQL-Server-specific accounts to log into SQL Server. The logon passwords of SQL logins are passed over the network for authentication, which makes SQL logins less secure than Windows logins.
+
+Secure sysadmin account
+The sysadmin (sa) account is vulnerable when it exits unchanged. Potential SQL Server attackers are aware of this, and it makes hacking one step easier if they take control of this powerful account. To prevent attacks on the sa account by name, rename the sa account to a different account name. To do that, in Object Explorer expand Logins, then right-click sa account and choose Rename from the menu. Alternatively, execute the following T-SQL script to rename the sa account:
+
+USE [master]
+GO
+
+ALTER LOGIN sa WITH NAME = [<New-name>]
+GO
+
+In addition to this, disable the sa account on your SQL Server instance.
+
+Use complex passwords for sa and SQL-Server-specific logins
+When Mixed Mode Authentication is used, ensure that complex passwords are used for sa and all other SQL-Server-specific logins on SQL Server. First, check the "Enforce password expiration" and "Enforce password policy" options for sa and all other SQL logins. These two options ensure that all other SQL-Server-specific logins abide by the login policies of the underlying operating system. In addition to this, set the MUST_CHANGE option for any new SQL login. This ensures that logins must change their passwords on first logon.
+
+Membership of sysadmin fixed-server role and CONTROL SERVER permission
+Carefully choose the membership of sysadmin fixed-server roles because members of this role can do whatever they want on SQL Server. Moreover, do not explicitly grant CONTROL SERVER permission to Windows logins, Windows Group logins and SQL logins because logins with this permission get full administrative privileges over a SQL Server installation. By default, the sysadmin fixed-server role has this permission granted explicitly.
+
+SQL Server Administration
+Avoid managing SQL Server instances using sa or any other SQL login account that has been granted CONTROL SERVER permission or is a member of sysadmin fixed-server role. Instead, institute dedicated Windows logins for DBAs, and assign these logins sysadmin rights on SQL Server for administration purposes. To grant permissions to users, use built-in fixed server roles and database roles, or create your own custom server roles and database roles that meet your needs of finer control over permissions.
+
+Revoke guest user access
+By default, guest user exists in every user and system database, which is a potential security risk in a lock down environment because it allows database access to logins who don’t have associated users in the database. Because of this potential security risk, disable guest user access from all user and system databases (excluding msdb). This ensures that public server role members are not able to access user databases on SQL Server instance unless they have been assigned explicit access to these databases.
+
+Limit permissions assigned to a public role
+Due to potential security risks, revoke public role access on the following extended stored procedures:
+
+
+Furthermore, do not explicitly assign permissions to a public role on user and system stored procedures. To list the stored procedures that are available to a public role, execute the following query:
+
+SELECT  o.[name] AS [SPName]
+
+ ,u.[name] AS [Role]
+
+FROM [master]..[sysobjects] o
+
+INNER JOIN [master]..[sysprotects] p
+
+ON o.[id] = p.[id]
+
+INNER JOIN [master]..[sysusers] u
+
+ON P.Uid = U.UID
+
+AND p.[uid] = 0
+
+AND o.[xtype] IN ('X','P')
+
+Reduce SQL Server Surface Area
+Configure SQL Server installation with only required features, and disable unwanted features after installation using SQL Server system’s surface area. You can also use the Policy-based Management feature to create system policies for implementing granular configuration settings for one or more SQL Server systems.
+
+Hardening SQL Server Ports
+Another SQL Server security best practice is to change the default ports associated with SQL Server installation by using SQL Server Configuration Manager. Furthermore, use specific TCP ports instead of dynamic ports. In addition, make sure that common TCP ports, such as 1433 and 1434 are not used for the client’s requests and communication because, these ports are well known that makes them a common target for hackers.
+
+Disable SQL Server Browser Service
+Make sure that SQL Server Browser Service is only running on SQL Servers where multiple instances of SQL Servers are running on a single server. SQL Server Browser Service enumerates SQL Server Information on the network, which is a potential security threat in a lock-down environment.
+
+SQL Server service accounts
+Create dedicated low-privilege domain accounts to run SQL Server services. In addition to this, review the membership of SQL Server service accounts on a regular basis, and ensure that they are not members of any domain users group or local groups that would grant them unnecessary permissions. For more information on the permission each SQL Server service account requires, see Configure Windows Service Accounts and Permissions.
+
+Secure SQL Server ErrorLogs and registry keys
+Secure SQL Server ErrorLogs and registry keys using NTFS permissions because they can reveal a great deal of information about the SQL Server instance and installation.
+
+
+
+

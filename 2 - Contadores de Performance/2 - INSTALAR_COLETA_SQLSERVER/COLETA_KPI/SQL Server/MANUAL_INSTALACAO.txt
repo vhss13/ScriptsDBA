@@ -1,0 +1,105 @@
+PASSO A PASSO PARA INSTALAÇÃO DAS COLETAS NO SQL SERVER (2005, 2008, 2008R2 E 2012)
+-----------------------------------------------------------------------------------
+
+1 - Verificar o usuário de Sistema Operacional necessário para inicialização do serviço do SQL Server Agent. Este usuário deve ter o acesso necessário (administrador ou similar) para execução do aplicativo "typeperf".
+
+2 - Criar o diretório "DBA" (se não exisrtir) e dentro deste o diretório "COLETA_KPI".
+
+3 - Copiar os arquivos que estão no diretório "D:\INSTALAR_COLETA_SQLSERVER" do servidor "200.185.21.2" para o diretório "\DBA\COLETA_KPI" que foi criado no Servidor onde será realizada a coleta.
+
+4 - Criar o Banco de Dados "DBA" com o "collation default = Latin1_General_CI_AS", se o "collation" estiver incorreto, alterar.
+
+5 - Criar um "System Datasource" via "ODBC" com o nome de "DSDBA" apontando para o Banco de Dados "DBA".
+
+6 - Executar o script "SCRIPTS_DBA_INSTALACAO_TODOS_OBJETOS.sql".
+    Serão criadas as seguintes tabelas no Banco de Dados "DBA":
+     - [CounterData]
+     - [CounterDetails]
+     - [DBA_DB_SIZE]
+     - [DBA_DB_TABLESIZE]
+     - [DisplayToID]
+     - [DS_Carga_Capacidade_BancoDatafile]
+     - [DS_Carga_Capacidade_BancoTabela]
+     - [DS_Carga_Capacidade_Disco]
+     - [DS_Carga_Parametros_Banco]
+     - [DS_Carga_PerfmonCollector]
+    Serão criados as seguintes storeds procedures no Banco de Dados "DBA":
+     - [SP_CARGA_PERFORMANCE]
+     - [SP_CARGA_CAPACIDADE]
+     - [SP_DBSIZE]
+     - [SP_TABLESIZE]
+    Serão criadas as seguintes views no Banco de Dados "DBA":
+     - [DBA_VW_Carga_Capacidade_BancoDatafile]
+     - [DBA_VW_Carga_Capacidade_BancoTabela]
+     - [DBA_VW_Carga_Capacidade_Disco]
+     - [DBA_VW_Carga_Parametros_Banco]
+     - [DBA_VW_Carga_PerfmonCollector]
+
+7 - Corrigir o arquivo "PerfmonCollector.bat" da seguinte forma:
+    - Alterar o Nome do Servidor (após a flag -S).
+	- Alterar o caminho onde está localizado o arquivo de parâmetros referente a lista de contadores (após a flag -cf) .
+
+8 - Corrigir o arquivo "ContadoresTodos.txt" da seguinte forma:
+    - executar o comando "typeperf -q > allcounters.txt" o prompt do dos. Esta ação é necessária para se identificar o Nome da Instância.
+    - Alterar o Nome do Servidor / Instância de acordo com o mesmo refereciado no arquivo "allcounters.txt".
+
+9 - Testar a execução do arquivo "PerfmonCollector.bat" manualmente (via prompt do DOS) para verificar se está funcionando sem erros.
+
+10 - Criar o JOB de Coleta Automática dos Dados de Performance da seguinte forma:
+     - Identificação do JOB
+       Name ...........: DBA_Carga_Performance
+       Owner ..........: Informar o usuário "owner" do JOB (de preferência Administrador da Máquina)
+       Category .......: Data Collector
+     - Passos do JOB
+       1 - Step name .: Limpa PerfmonCollector
+           Type ......: Transact-SQL script (T-SQL)
+           Run as ....: <em branco>
+           Database ..: DBA
+           Command ...: Informar o nome do diretório/arquivo "SCRIPTS_DBA_LIMPA_TABELAS_PERFMONCOLLECTOR.sql" utilizado para limpeza das tabelas de coleta (PerfmonCollector)
+       2 - Step name .: Carga PerfmonCollector
+           Type ......: Operating system (CmdExec)
+	       Run as ....: SQl Server Agent Service Account
+	       Command ...: Informar o nome do diretório/arquivo "PerfmonCollector.bat" customizado utilizado para executar o aplicativo "typeperf"
+       3 - Step name .: Carga Data Stage Performance
+           Type ......: Transact-SQL script (T-SQL)
+	       Run as ....: <em branco>
+	       Database ..: DBA
+	       Command ...: Informar o nome do diretório/arquivo "SCRIPTS_DBA_CARGA_PERFORMANCE.sql" utilizado para carga das tabelas de coleta
+     - Schedulles do JOB
+       Name ............: Carga Performance
+       Schedule type ...: Recurring
+       Enabled .........: True (checkado)
+       Frequency .......: Occurs every day every 5 minute(s) between 00:00:00 and 23:59:59. Schedule will be used starting on XX/XX/XXXX.
+
+11 - Criar o JOB de Coleta Automática dos Dados de Capacidade da seguinte forma:
+     - Identificação do JOB
+       Name ...........: DBA_Carga_Capacidade
+       Owner ..........: Informar o usuário "owner" do JOB (de preferência Administrador da Máquina)
+       Category .......: Data Collector
+     - Passos do JOB
+       1 - Step name .: Limpa DBSIZE
+           Type ......: Transact-SQL script (T-SQL)
+	       Run as ....: <em branco>
+	       Database ..: DBA
+	       Command ...: Informar o nome do diretório/arquivo "SCRIPTS_DBA_LIMPA_TABELAS_CAPACIDADE.sql" utilizado para limpeza das tabelas de coleta (Capacidade)
+       2 - Step name .: Carga DBSIZE
+           Type ......: Transact-SQL script (T-SQL)
+	       Run as ....: <em branco>
+	       Database ..: DBA
+	       Command ...: Informar o nome do diretório/arquivo "SCRIPTS_DBA_CARREGA_TABELAS_CAPACIDADE.sql" utilizado para carga das tabelas de coleta (Capacidade)
+       3 - Step name .: Carga Data Stage Capacidade
+           Type ......: Transact-SQL script (T-SQL)
+	       Run as ....: <em branco>
+	       Database ..: DBA
+	       Command ...: Informar o nome do diretório/arquivo "SCRIPTS_DBA_CARGA_CAPACIDADE.sql" utilizado para carga das tabelas de coleta (Todas)
+     - Schedulles do JOB
+       Name ............: Carga Capacidade
+       Schedule type ...: Recurring
+       Enabled .........: True (checkado)
+       Frequency .......: Occurs every day at 23:00:00. Schedule will be used starting on XX/XX/XXXX.
+
+
+
+OBSERVAÇÕES:
+In order to use typeperf, you must either be a member of the local Performance Log Users group, or the command must be executed from an elevated command window.
+Na execução do comando "typeperf" são criadas automaticamente as tabelas [CounterData], [CounterDetails] e [DisplayToID].
