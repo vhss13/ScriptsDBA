@@ -1,4 +1,4 @@
-dbcc updateusage(0)   --Você deve executar este commando antes para atualizar o catalogo
+dbcc updateusage(0)   --Voce deve executar este commando antes para atualizar o catalogo
 go
 
 
@@ -15,7 +15,7 @@ group by id, groupid
 
 
 /*
-dbcc updateusage(0)   --Você deve executar este commando antes para atualizar o catalogo
+dbcc updateusage(0)   --Voce deve executar este commando antes para atualizar o catalogo
 GO
 
 select 

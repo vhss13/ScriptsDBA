@@ -1,7 +1,7 @@
 set nocount on
 
 /**********************************
-* remoção das tabelas temporárias *
+* remocao das tabelas temporcrias *
 **********************************/
 if exists (select 1 from tempdb..sysobjects where [id] = object_id('tempdb..#dbloginlist'))
 begin
@@ -94,7 +94,7 @@ drop table #fixeddrives
 end
 
 /**********************************
-* criação das tabelas temporárias *
+* criacao das tabelas tempororias *
 **********************************/
 create table #dbloginlist
 ([servername] varchar(255),
@@ -218,7 +218,7 @@ create table #dbfileinfo
  [datechecked] datetime)
 
 /*********************************
-*    informações da instância    *
+*    informacoes da instancia    *
 *********************************/
 declare @sqlstring varchar(3000)
 declare @minid int
@@ -268,8 +268,8 @@ if  8 = (select substring(@version, 1, 1))
 -- print 'ssis a partir do sql 2005'
 select @sqlstring = 'ssis a partir do sql 2005'
 if  (select count(*) from msdb..sysobjects where name = 'sysssispackages') = ''
--- print 'ssis não configurado'
-select @sqlstring = 'ssis não configurado'
+-- print 'ssis nao configurado'
+select @sqlstring = 'ssis nao configurado'
 else
 begin
 -- print @sqlstring
@@ -294,10 +294,12 @@ exec (@sqlstring)
 
 insert into #dbresumo (instance_name) select @@servername               as instance_name
 update #dbresumo set qde_login        = (select count(login.loginname)  as qde_login from #dbloginlist login)
-update #dbresumo set qde_dts          = (select count(distinct dts.name)         as qde_dts from #dbdts dts)update #dbresumo set qde_ssis         = (select count(distinct ssis.name)        as qde_ssis from #dbssis ssis)update #dbresumo set qde_linkedserver = (select count(ls.name)          as qde_linkedserver from #dblinkedserver ls)
+update #dbresumo set qde_dts          = (select count(distinct dts.name)         as qde_dts from #dbdts dts)
+update #dbresumo set qde_ssis         = (select count(distinct ssis.name)        as qde_ssis from #dbssis ssis)
+update #dbresumo set qde_linkedserver = (select count(ls.name)          as qde_linkedserver from #dblinkedserver ls)
 
 /*********************************
-*    informações dos bancos      *
+*    informacies dos bancos      *
 *********************************/
 declare @tbldbname table
 (rowid int identity(1,1),
@@ -480,7 +482,7 @@ select @minid = @minid + 1
 end
 
 /*********************************
-*     select das informações     *
+*     select das informacoes     *
 *********************************/
 print 'resumo_instance'
 select SERVERPROPERTY('servername') as Instance_Name,
@@ -504,7 +506,7 @@ print ''
 end
 if  (select count(*) from msdb..sysobjects where name = 'sysssispackages') = ''
 begin
-print 'ssis não configurado'
+print 'ssis nao configurado'
 print ''
 end
 else
@@ -550,7 +552,7 @@ on substring(a.physicalfilename,1,1) = b.driveletter
 order by dbname,groupid,fileid
 
 /**********************************
-* remoção das tabelas temporárias *
+* remocao das tabelas tempororias *
 **********************************/
 if exists (select 1 from tempdb..sysobjects where [id] = object_id('tempdb..#dbloginlist'))
 begin

@@ -99,10 +99,10 @@ insert into MyAuxTable select name,size,used,logsize,logspaceused from #dbs1;
 
 select
 @@servername as 'Nome da Instancia'
-,(select count(name) from master.dbo.sysdatabases) as 'Nº de BDs'
-,sum(a.size)/(select count(name) from master.dbo.sysdatabases) as 'Espaço Alocado (mb)'
-,sum(a.used)/(select count(name) from master.dbo.sysdatabases) as 'Espaço Utilizado (mb)'
-,(sum(a.size)-sum(a.used))/(select count(name) from master.dbo.sysdatabases) as 'Espaço Livre (mb)'
+,(select count(name) from master.dbo.sysdatabases) as 'No de BDs'
+,sum(a.size)/(select count(name) from master.dbo.sysdatabases) as 'Espaco Alocado (mb)'
+,sum(a.used)/(select count(name) from master.dbo.sysdatabases) as 'Espaco Utilizado (mb)'
+,(sum(a.size)-sum(a.used))/(select count(name) from master.dbo.sysdatabases) as 'Espaco Livre (mb)'
 from MyAuxTable a, master.dbo.sysdatabases b
 
 
