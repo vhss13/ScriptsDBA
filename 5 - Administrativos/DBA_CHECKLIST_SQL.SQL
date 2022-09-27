@@ -39,7 +39,7 @@ IF NOT EXISTS (SELECT a.spid,a.status,a.cmd,a.cpu,a.physical_io,a.blocked,a.wait
 from master.dbo.sysprocesses a, master.dbo.sysdatabases b
 where a.dbid=b.dbid and a.status not in ('background') and a.waittime > 60000 and a.blocked <> 0)
 BEGIN
-PRINT 'NÃO EXISTEM PROCESSOS COM LOCK MAIOR QUE 1MIN'
+PRINT 'NAO EXISTEM PROCESSOS COM LOCK MAIOR QUE 1MIN'
 END
 ELSE
 BEGIN
@@ -53,7 +53,7 @@ IF NOT EXISTS (SELECT a.spid,a.status,a.cmd,a.cpu,a.physical_io,a.blocked,a.wait
 from master.dbo.sysprocesses a, master.dbo.sysdatabases b
 where a.dbid=b.dbid and a.status not in ('background') and a.cmd = 'BACKUP DATABASE')
 BEGIN
-PRINT 'NÃO EXISTE PROCESSO DE BACKUP DATABASE EM EXECUÇÃO'
+PRINT 'NAO EXISTE PROCESSO DE BACKUP DATABASE EM EXECUCAO'
 END
 ELSE
 BEGIN
@@ -62,13 +62,13 @@ from master.dbo.sysprocesses a, master.dbo.sysdatabases b
 where a.dbid=b.dbid and a.status not in ('background') and a.cmd = 'BACKUP DATABASE'
 END
 
-PRINT char(13) + char(13) + 'QUANTIDADE DE SESSÕES NO BANCO' + char(13) + '================================'
-SELECT count(*) as Qde_Sessões
+PRINT char(13) + char(13) + 'QUANTIDADE DE SESSOES NO BANCO' + char(13) + '================================'
+SELECT count(*) as Qde_Sessï¿½es
 from master.dbo.sysprocesses a, master.dbo.sysdatabases b
 where a.dbid=b.dbid and a.status not in ('background')
 
-PRINT char(13) + 'QUANTIDADE DE SESSÕES ATIVAS NO BANCO' + char(13) + '================================'
-SELECT count(*) as Qde_Sessões_Ativas
+PRINT char(13) + 'QUANTIDADE DE SESSOES ATIVAS NO BANCO' + char(13) + '================================'
+SELECT count(*) as Qde_Sessï¿½es_Ativas
 from master.dbo.sysprocesses a, master.dbo.sysdatabases b
 where a.dbid=b.dbid and a.status in ('runnable')
 
@@ -98,7 +98,7 @@ SELECT @SQLString =
 EXEC (@SQLString)
 END
 
-PRINT char(13) + 'TOP 10 ALTA UTILIZAÇÃO DE IO' + char(13) + '================================'
+PRINT char(13) + 'TOP 10 ALTA UTILIZACAO DE IO' + char(13) + '================================'
 IF (select substring(@version, 1, 1))= 8
 BEGIN
 SELECT top 10 a.spid,a.status,a.cmd,a.cpu,a.physical_io,a.blocked,a.waittime,b.name as database_name,a.last_batch, a.login_time
@@ -124,7 +124,7 @@ SELECT @SQLString =
 EXEC (@SQLString)
 END
 
-PRINT char(13) + 'INFORMAÇÕES DOS DATAFILES' + char(13) + '================================'
+PRINT char(13) + 'INFORMACOES DOS DATAFILES' + char(13) + '================================'
 IF EXISTS (SELECT 1 FROM Tempdb..Sysobjects WHERE [Id] = OBJECT_ID('Tempdb..#DBFileInfo'))
 BEGIN
 DROP TABLE #DBFileInfo
