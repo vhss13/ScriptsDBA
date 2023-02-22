@@ -3,7 +3,7 @@ SELECT
     start_time ,
     command, 
     b.name AS DatabaseName, --Most of the time will said Main but this is because db is not accesible
-    DATEADD(ms,estimated_completion_time,GETDATE()) AS 'Previsão de Término',
+    DATEADD(ms,estimated_completion_time,GETDATE()) AS 'Previsao de Termino',
     (estimated_completion_time/1000/60) AS MinutesToFinish
 
     FROM sys.dm_exec_requests a
