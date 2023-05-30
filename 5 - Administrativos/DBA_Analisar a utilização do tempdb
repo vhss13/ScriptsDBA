@@ -1,0 +1,10 @@
+-- Analisar a utilização do tempdb
+SELECT a.name AS LogicalName,
+'SizeinMB' = (size/128)
+,fileproperty(a.name, 'spaceused' )/128 as UsedinMB
+,(size/128) -fileproperty (a.name,'SpaceUsed')/128 AS FreeInMB
+,'Free%'=cast (((a.size/128.0)-fileproperty(a.name,'SpaceUsed')/128.0)/(a.size/128.0)*100 as numeric(15))
+, ((a.size/128.0)-fileproperty(a.name,'SpaceUsed')/128.0) / SUM ((a.size/128.0)-(fileproperty(a.name,'SpaceUsed')/128)) OVER (PARTITION BY fg.data_space_id) As [PropFree%]
+,fg.name
+FROM sysfiles a LEFT join sys.filegroups fg 
+ON a.groupid = fg.data_space_id
