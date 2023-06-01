@@ -1,0 +1,13 @@
+--Blocking is occurrin
+
+select * 
+from sys.dm_os_waiting_tasks 
+where blocking_session_id is not null
+
+select *
+from sys.dm_exec_requests
+where session_id = <session_id>
+
+exec sp_whoisactive <session_id>,@get_plans = 1, @get_outer_command = 1
+
+dbcc inputbuffer(<session_id>)
